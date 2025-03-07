@@ -1,0 +1,146 @@
+ @import url('https://fonts.googleapis.com/css2?family=Whitney:wght@300;400;500;600;700&display=swap');
+        
+        @font-face {
+            font-family: Whitney;
+            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-300.woff);
+            font-weight: 300;
+        }
+
+        @font-face {
+            font-family: Whitney;
+            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-400.woff);
+            font-weight: 400;
+        }
+
+        @font-face {
+            font-family: Whitney;
+            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-500.woff);
+            font-weight: 500;
+        }
+
+        @font-face {
+            font-family: Whitney;
+            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-600.woff);
+            font-weight: 600;
+        }
+
+        @font-face {
+            font-family: Whitney;
+            src: url(https://cdn.jsdelivr.net/gh/Tyrrrz/DiscordFonts@master/whitney-700.woff);
+            font-weight: 700;
+        }
+        .red-text {
+              color: red; /* Make the text red */
+              font-weight: bold; /* Optional: make the text bold */
+          }
+
+
+        body {
+            background-color: #36393e;
+            color: #dcddde;
+            font-family: "Whitney", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            font-size: 17px;
+            font-weight: 400;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .popup {
+            background-color: #2F3136;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+            width: 400px;
+            text-align: center;
+            position: relative;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .close-btn:hover {
+            color: #D83C3E;
+        }
+        .popup h2 {
+            color: #D83C3E;
+            font-size: 27px;
+            margin-top: 0px;
+            margin-bottom: 2px;
+        }
+        .popup h3 {
+            color: #a3a2a6;
+            font-size: 17px;
+            margin-bottom: 15px;
+            margin-top: 0px;
+        }
+        .popup p {
+            font-size: 15px;
+            color: #B9BBBE;
+        }
+        .popup .button-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .popup .button-container a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #4F545C;
+            border: none;
+            color: white;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .popup .button-container a:hover {
+            background-color: #40444B;
+        }
+        .popup .button-container a img {
+            width: 40px;
+        }
+        .popup-footer {
+            background-color: #202225;
+            padding: 15px;
+            border-radius: 0 0 10px 10px;
+            margin: 15px -30px -30px -30px;
+        }
+        .popup-footer button {
+            background-color: #4F545C;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .popup-footer button:hover {
+            background-color: #40444B;
+        }
+        .white-text {
+            color: white;
+        }
