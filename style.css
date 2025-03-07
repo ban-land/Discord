@@ -155,8 +155,7 @@ span.hyperlink {
   cursor: pointer;
   margin-top: 20px;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 0.87rem;
+  font-size: 0.85rem;
   letter-spacing: 0.04rem;
   transition: color 0.2s linear;
   line-height: 30px;
