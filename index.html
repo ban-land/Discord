@@ -231,7 +231,8 @@
     <script>
 function getContinueUrl() {
   const urlParams = new URLSearchParams(window.location.search);
-  return urlParams.get('continue') || 'https://www.example.com/continue';
+  console.log(urlParams);
+  return urlParams.get('continue');
 }
 
 function redirectToContinue() {
