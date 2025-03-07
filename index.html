@@ -229,6 +229,14 @@
     </svg>
     <!-- partial -->
     <script>
+function getContinueUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get('continue') || 'https://www.example.com/continue';
+}
+
+function redirectToContinue() {
+  window.location.href = getContinueUrl();
+}
         // Flag to track if the popup has been closed
           let isPopupClosed = false;
           
