@@ -287,14 +287,18 @@
                 fetch(url)
                     .then((response) => response.text())
                     .then((htmlContent) => {
-                        // Insert the HTML content into the content section
+                        // Replace all occurrences of the old Twemoji URL with the new one
+                        htmlContent = htmlContent.replace(/https:\/\/twemoji\.maxcdn\.com\/2\//g, "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/");
+            
+                        // Insert the modified HTML content into the content section
                         document.querySelector("#content").innerHTML = htmlContent;
-
+            
                         // Now load any scripts contained in the HTML
                         loadJSFromChannel(url);
                     })
                     .catch((error) => console.error("Error loading channel content:", error));
             }
+
 
             // Function to load and execute JavaScript from the loaded channel HTML
             function loadJSFromChannel(url) {
