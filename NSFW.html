@@ -72,9 +72,9 @@ function getContinueUrl() {
   return urlParams.get('continue') || 'https://www.example.com/continue';
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-  document.getElementById("continue-btn").href = getContinueUrl();
-});
+function redirectToContinue() {
+  window.location.href = getContinueUrl();
+}
 </script>
 </head>
 <body>
@@ -87,11 +87,10 @@ document.addEventListener("DOMContentLoaded", function() {
   <p>This channel is unmonitored and may contain sensitive content. Do you wish to proceed?</p>
   <div class="button-container">
     <button class="nope" onclick="location.href='https://ban-land.github.io/Discord/'">Nope</button>
-    <a id="continue-btn" class="continue" style="text-decoration: none;">
-      <button class="continue">Continue</button>
-    </a>
+    <button class="continue" onclick="redirectToContinue()">Continue</button>
   </div>
 </div>
+
 
 </body>
 </html>
