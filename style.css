@@ -12,7 +12,7 @@
 html, body {
   height: 100%;
   background: #121416;
-  color: #caccce;
+  color: #FFF;
   font-size: 16px;
   font-family: "Roboto";
   color-scheme: dark;
@@ -155,18 +155,18 @@ span.hyperlink {
   cursor: pointer;
   margin-top: 20px;
   text-transform: uppercase;
-  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.87rem;
   letter-spacing: 0.04rem;
   transition: color 0.2s linear;
   line-height: 30px;
   position: relative;
 }
 .channels .channels-list .channels-list-header:hover, .channels .channels-list .channels-list-header:focus {
-  color: #8A8E94;
+  color: #FFF;
 }
-.channels .channels-list .channels-list-header:hover::after,
-.channels .channels-list .channels-list-header:focus::after {
-  opacity: 0,25; /* Opacity on hover or focus */
+.channels .channels-list .channels-list-header:hover::after, .channels .channels-list .channels-list-header:focus::after {
+  opacity: 1;
 }
 .channels .channels-list .channels-list-header::after {
   position: absolute;
@@ -175,7 +175,7 @@ span.hyperlink {
   content: " ";
   width: 10px;
   height: 10px;
-  opacity: .25;
+  opacity: 0.3;
   transition: opacity 0.2s linear;
   background: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMCAxMCI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTguOTksMy45OUg2LjAxVjEuMDFDNi4wMSwwLjQ1Miw1LjU1OCwwLDUsMFMzLjk5LDAuNDUyLDMuOTksMS4wMVYzLjk5SDEuMDFDMC40NTIsMy45OSwwLDQuNDQyLDAsNWMwLDAuNTU4LDAuNDUyLDEuMDEsMS4wMSwxLjAxSDMuOTlWOC45OUMzLjk5LDkuNTQ4LDQuNDQyLDEwLDUsMTBzMS4wMS0wLjQ1MiwxLjAxLTEuMDFWNi4wMUg4Ljk5QzkuNTQ4LDYuMDEsMTAsNS41NTgsMTAsNUMxMCw0LjQ0Miw5LjU0OCwzLjk5LDguOTksMy45OXoiLz48L3N2Zz4=) no-repeat 50%;
 }
@@ -298,7 +298,7 @@ a {
   display: none;
 }
 .server.server-friends::after {
-  content: "7 ONLINE";
+  content: "2 ONLINE";
   color: rgba(255, 255, 255, 0.3);
   pointer-events: none;
   font-weight: 300;
@@ -327,7 +327,7 @@ a {
   background: #8A8E94;
 }
 .server.active::before {
-  background: #caccce;
+  background: #FFF;
   height: 40px;
   top: 5px;
 }
