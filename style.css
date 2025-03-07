@@ -162,7 +162,7 @@ span.hyperlink {
   position: relative;
 }
 .channels .channels-list .channels-list-header:hover, .channels .channels-list .channels-list-header:focus {
-  color: #caccce;
+  color: #8A8E94;
 }
 .channels .channels-list .channels-list-header:hover::after, .channels .channels-list .channels-list-header:focus::after {
   opacity: 1;
