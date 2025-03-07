@@ -169,7 +169,6 @@ span.hyperlink {
   opacity: 1;
 }
 .channels .channels-list .channels-list-header::after {
-  position: absolute;
   top: 10px;
   right: 0;
   content: " ";
