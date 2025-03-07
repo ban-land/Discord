@@ -290,14 +290,35 @@
                         // Replace all occurrences of the old Twemoji URL with the new one
                         htmlContent = htmlContent.replace(/https:\/\/twemoji\.maxcdn\.com\/2\//g, "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/");
             
+                        // Create a temporary container to manipulate the HTML content
+                        let tempContainer = document.createElement("div");
+                        tempContainer.innerHTML = htmlContent;
+            
+                        // Remove elements with the class 'preamble__guild-icon-container'
+                        tempContainer.querySelectorAll(".preamble__guild-icon-container").forEach(el => el.remove());
+                        
+                        // Remove 'ban land' entries
+                        tempContainer.querySelectorAll(".preamble__entry").forEach(el => {
+                            if (el.textContent.trim() === "ban land") {
+                                el.remove();
+                            }
+                        });
+            
+                        // Modify contents of 'postamble' div
+                        tempContainer.querySelectorAll(".postamble").forEach(el => {
+                            el.innerHTML = '<a href="https://github.com/George-TheGamer">Content Restored by GeorgeTheGamer</a>';
+                        });
+            
                         // Insert the modified HTML content into the content section
-                        document.querySelector("#content").innerHTML = htmlContent;
+                        document.querySelector("#content").innerHTML = tempContainer.innerHTML;
             
                         // Now load any scripts contained in the HTML
                         loadJSFromChannel(url);
                     })
                     .catch((error) => console.error("Error loading channel content:", error));
             }
+
+
 
 
             // Function to load and execute JavaScript from the loaded channel HTML
