@@ -229,14 +229,10 @@
     </svg>
     <!-- partial -->
     <script>
-function getContinueUrl() {
-  const urlParams = new URLSearchParams(window.location.search);
-  console.log(urlParams);
-  return urlParams.get('continue');
-}
+let redirect = "index.html";
 
 function redirectToContinue() {
-  window.location.href = getContinueUrl();
+  window.location.href = redirect;
 }
         // Flag to track if the popup has been closed
           let isPopupClosed = false;
@@ -339,6 +335,7 @@ function redirectToContinue() {
 
             // Function to change the menu name and load the correct channel content
             function loadChannelAndChangeMenu(channelUrl, channelName) {
+                redirect = channelName;
                 // Load the channel HTML
                 loadChannel(channelUrl);
 
