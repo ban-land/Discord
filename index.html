@@ -228,183 +228,140 @@
         />
     </svg>
     <!-- partial -->
-    <script>
-// Track the lowest and highest page numbers that have been loaded.
-let minPage = 0, maxPage = 0; // Starting page is 7.
-let pages = {}; // Cache loaded pages.
-let container, topSentinel, bottomSentinel;
-
-function loadCSS() {
-  const cssUrl = `https://raw.githubusercontent.com/ban-land/Backups/refs/heads/main/Channels/ban%20land%20-%20💬%20chat%20-%20trash%20[703855942055493652]/[703855942055493652]_part_0.html`;
-
-  fetch(cssUrl)
-    .then(response => response.text())
-    .then(html => {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, 'text/html');
-      const styleTags = doc.querySelectorAll('style, link[rel="stylesheet"]');
-
-      styleTags.forEach(tag => {
-        document.head.appendChild(tag.cloneNode(true));
-      });
-    })
-    .catch(err => console.error('Error loading CSS from part_0:', err));
-}
-
-function loadPage(page, prepend = false) {
-  if (page < 0 || pages[page]) return;
-
-  const pageDiv = document.createElement("div");
-  pageDiv.className = "page skeleton";
-  pageDiv.id = `page_${page}`;
-
-  if (prepend) {
-    container.insertBefore(pageDiv, topSentinel.nextSibling);
-  } else {
-    container.insertBefore(pageDiv, bottomSentinel);
-  }
-
-  let prevHeight = container.scrollHeight;
-  const url = `https://raw.githubusercontent.com/ban-land/Backups/refs/heads/main/Channels/ban%20land%20-%20💬%20chat%20-%20trash%20[703855942055493652]/[703855942055493652]_part_${page}.html`;
-
-  fetch(url)
-    .then(response => response.text())
-    .then(htmlContent => {
-      const processedHTML = processChannelHTML(htmlContent);
-      pageDiv.innerHTML = processedHTML;
-      pageDiv.classList.remove("skeleton");
-      pages[page] = pageDiv;
-
-      if (prepend) {
-        let newHeight = container.scrollHeight;
-        let heightDiff = newHeight - prevHeight;
-        window.scrollBy(0, heightDiff);
-      }
-    })
-    .catch(err => console.error("Error loading page", page, err));
-}
-
-function processChannelHTML(htmlContent) {
-  htmlContent = htmlContent.replace(
-    /https:\/\/twemoji\.maxcdn\.com\/2\//g,
-    "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/"
-  );
-
-  let tempContainer = document.createElement("div");
-  tempContainer.innerHTML = htmlContent;
-
-  tempContainer.querySelectorAll(".preamble__guild-icon-container").forEach(el => el.remove());
-  tempContainer.querySelectorAll(".preamble__entry").forEach(el => {
-    if (el.textContent.trim() === "ban land") {
-      el.remove();
-    }
-  });
-
-  tempContainer.querySelectorAll(".postamble").forEach(el => {
-    el.innerHTML = '<a href="https://github.com/George-TheGamer">Content Restored by GeorgeTheGamer</a>';
-  });
-
-  return tempContainer.innerHTML;
-}
-
-const createObserver = (sentinel, loadPageFunc, getPage) => {
-  const observer = new IntersectionObserver(entries => {
-    if (entries.some(entry => entry.isIntersecting)) {
-      loadPageFunc(getPage());
-    }
-  });
-  observer.observe(sentinel);
-};
-
-const incrementMaxPage = () => ++maxPage;
-const decrementMinPage = () => (minPage > 0 ? --minPage : minPage);
-
-let redirect = "index.html";
-
-function redirectToContinue() {
-  container = document.getElementById('container');
-  topSentinel = document.getElementById('top-sentinel');
-  bottomSentinel = document.getElementById('bottom-sentinel');
-  document.addEventListener("DOMContentLoaded", loadCSS);
-  createObserver(bottomSentinel, page => loadPage(page, false), incrementMaxPage);
-  createObserver(topSentinel, page => loadPage(page, true), decrementMinPage);
-  loadChannel(redirect);
-}
-
-let isPopupClosed = false;
-
-function closePopup() {
-  document.querySelector('[data-channel="announcements"]').classList.add('active');
-  document.getElementById("overlay").style.display = "none";
-  isPopupClosed = true;
-  showlinks();
-}
-
-function showlinks() {
-  if (isPopupClosed) {
-    document.querySelectorAll("a").forEach(link => {
-      if (link.href.startsWith("http://ban.land/")) {
-        link.href = link.href.replace("http://ban.land/", "https://ban-land.github.io/");
-      }
-      link.style.display = "inline";
-    });
-  }
-}
-
-function loadChannel(url) {
-  fetch(url)
-    .then(response => response.text())
-    .then(htmlContent => {
-      document.querySelector("#content").innerHTML = processChannelHTML(htmlContent);
-      loadJSFromChannel(url);
-      showlinks();
-    })
-    .catch(error => console.error("Error loading channel content:", error));
-}
-
-function loadJSFromChannel(url) {
-  fetch(url)
-    .then(response => response.text())
-    .then(htmlContent => {
-      let tempDiv = document.createElement("div");
-      tempDiv.innerHTML = htmlContent;
-
-      Array.from(tempDiv.getElementsByTagName("script")).forEach(script => {
-        if (script.src) {
-          let externalScript = document.createElement("script");
-          externalScript.src = script.src;
-          externalScript.type = "text/javascript";
-          document.body.appendChild(externalScript);
-        } else {
-          let inlineScript = document.createElement("script");
-          inlineScript.textContent = script.innerHTML;
-          document.body.appendChild(inlineScript);
-        }
-      });
-    })
-    .catch(error => console.error("Error loading JavaScript from channel:", error));
-}
-
-function loadChannelAndChangeMenu(event, channelUrl, channelName) {
-  redirect = channelName;
-  loadChannel(channelUrl);
-  document.querySelector(".menu-name").textContent = channelName;
-
-  document.querySelectorAll(".channels-list-text .channel").forEach(channel => {
-    channel.classList.remove("active");
-  });
-
-  let clickedChannel = event.target.closest(".channel");
-  if (clickedChannel) {
-    clickedChannel.classList.add("active");
-  }
-}
-
-window.onload = function () {
-  loadChannelAndChangeMenu(event, 'https://raw.githubusercontent.com/ban-land/Discord/refs/heads/main/ban%20land%20-%20News%20-%20announcements%20%5B541763749137350657%5D.html', 'announcements');
-  openPopup();
-};
-
+<script>
+ let redirect = "index.html";
+ 
+ function redirectToContinue() {
+   //window.location.href = redirect;
+   loadChannelAndChangeMenu(redirect, redirect);
+   console.log(redirect);
+ }
+         // Flag to track if the popup has been closed
+           let isPopupClosed = false;
+ 
+           function closePopup() {
+               document.querySelector('[data-channel="announcements"]').classList.add('active');
+               document.getElementById("overlay").style.display = "none";
+ 
+               // Set the flag to true when the popup is closed
+               isPopupClosed = true;
+               showlinks();
+           }
+ 
+           function showlinks() {
+               // Check if the popup has been closed previously
+               if (isPopupClosed) {
+                   // Show all hyperlinks again
+                   const links = document.querySelectorAll("a");
+                   links.forEach((link) => {
+                       if (link.href.startsWith("http://ban.land/")) {
+                             link.href = link.href.replace("http://ban.land/", "https://ban-land.github.io/");
+                         }
+                       link.style.display = "inline"; // Or 'block', depending on the default display of your links
+                   });
+               } else {
+                   console.log('Popup has not been closed yet.');
+               }
+           }
+ 
+ 
+ 
+             // Function to load the channel's HTML content
+             function loadChannel(url) {
+                 fetch(url)
+                     .then((response) => response.text())
+                     .then((htmlContent) => {
+                         // Replace all occurrences of the old Twemoji URL with the new one
+                         htmlContent = htmlContent.replace(/https:\/\/twemoji\.maxcdn\.com\/2\//g, "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/");
+ 
+                         // Create a temporary container to manipulate the HTML content
+                         let tempContainer = document.createElement("div");
+                         tempContainer.innerHTML = htmlContent;
+ 
+                         // Remove elements with the class 'preamble__guild-icon-container'
+                         tempContainer.querySelectorAll(".preamble__guild-icon-container").forEach(el => el.remove());
+ 
+                         // Remove 'ban land' entries
+                         tempContainer.querySelectorAll(".preamble__entry").forEach(el => {
+                             if (el.textContent.trim() === "ban land") {
+                                 el.remove();
+                             }
+                         });
+ 
+                         // Modify contents of 'postamble' div
+                         tempContainer.querySelectorAll(".postamble").forEach(el => {
+                             el.innerHTML = '<a href="https://github.com/George-TheGamer">Content Restored by GeorgeTheGamer</a>';
+                         });
+ 
+                         // Insert the modified HTML content into the content section
+                         document.querySelector("#content").innerHTML = tempContainer.innerHTML;
+ 
+                         // Now load any scripts contained in the HTML
+                         loadJSFromChannel(url);
+                         showlinks();
+                     })
+                     .catch((error) => console.error("Error loading channel content:", error));
+             }
+ 
+ 
+ 
+ 
+             // Function to load and execute JavaScript from the loaded channel HTML
+             function loadJSFromChannel(url) {
+                 fetch(url)
+                     .then((response) => response.text())
+                     .then((htmlContent) => {
+                         // Create a temporary div element to extract scripts
+                         var tempDiv = document.createElement("div");
+                         tempDiv.innerHTML = htmlContent;
+ 
+                         // Find all <script> tags in the HTML content
+                         var scripts = tempDiv.getElementsByTagName("script");
+ 
+                         // Loop through the scripts and execute them
+                         Array.from(scripts).forEach(function (script) {
+                             // Check if the script has a src attribute (external script)
+                             if (script.src) {
+                                 var externalScript = document.createElement("script");
+                                 externalScript.src = script.src;
+                                 externalScript.type = "text/javascript";
+                                 document.body.appendChild(externalScript);
+                             } else {
+                                 // Otherwise, run the inline JavaScript directly
+                                 eval(script.innerHTML);
+                             }
+                         });
+                     })
+                     .catch((error) => console.error("Error loading JavaScript from channel:", error));
+             }
+ 
+             // Function to change the menu name and load the correct channel content
+             function loadChannelAndChangeMenu(channelUrl, channelName) {
+                 redirect = channelName + ".html";
+                 // Load the channel HTML
+                 loadChannel(channelUrl);
+ 
+                 // Change the displayed channel name in the menu
+                 document.querySelector(".menu-name").textContent = channelName;
+ 
+                 // Remove the "active" class from all channel items
+                 var allChannels = document.querySelectorAll(".channels-list-text .channel");
+                 allChannels.forEach(function (channel) {
+                     channel.classList.remove("active");
+                 });
+ 
+                 // Add "active" class to the clicked channel by setting it from the clicked element's parent
+                 // Here, 'event.target' refers to the clicked <span> element.
+                 var clickedChannel = event.target.closest(".channel");
+                 clickedChannel.classList.add("active");
+             }
+ 
+             // Automatically load the first channel (Announcements) on page load
+             window.onload = function () {
+                 loadChannelAndChangeMenu('https://raw.githubusercontent.com/ban-land/Discord/refs/heads/main/ban%20land%20-%20News%20-%20announcements%20%5B541763749137350657%5D.html', 'announcements');
+                 openPopup();
+ 
+             };
     </script>
 </body>
 
