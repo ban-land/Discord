@@ -102,16 +102,22 @@
          }
          
          
-        const createObserver = (sentinel, loadPageFunc, getPage) => {
-          new IntersectionObserver(entries => {
-            if (entries.some(entry => entry.isIntersecting)) {
-              loadPageFunc(getPage());
-            }
-          }, { rootMargin: '200px' }).observe(sentinel);
-        };
-        
-        createObserver(bottomSentinel, page => loadPage(page, false), () => ++maxPage);
-        createObserver(topSentinel, page => loadPage(page, true), () => minPage > 0 ? --minPage : minPage);
+const createObserver = (sentinel, loadPageFunc, getPage) => {
+  const observer = new IntersectionObserver(entries => {
+    // Trigger loadPage when the sentinel is intersecting
+    if (entries.some(entry => entry.isIntersecting)) {
+      loadPageFunc(getPage());
+    }
+  });
+  
+  observer.observe(sentinel);
+};
+
+const incrementMaxPage = () => ++maxPage;
+const decrementMinPage = () => (minPage > 0 ? --minPage : minPage);
+
+createObserver(bottomSentinel, (page) => loadPage(page, false), incrementMaxPage);
+createObserver(topSentinel, (page) => loadPage(page, true), decrementMinPage);
 
          
       </script>
