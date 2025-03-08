@@ -102,32 +102,18 @@
          }
          
          
-           // Observer for the bottom sentinel: load the next page when near the bottom.
-           const bottomObserver = new IntersectionObserver(entries => {
-             entries.forEach(entry => {
-               if (entry.isIntersecting) {
-                 let nextPage = maxPage + 1;
-                 loadPage(nextPage, false);
-                 maxPage = nextPage;
-               }
-             });
-           }, { rootMargin: '200px' });
-           bottomObserver.observe(bottomSentinel);
+        const createObserver = (sentinel, loadPageFunc, getPage) => {
+          new IntersectionObserver(entries => {
+            if (entries.some(entry => entry.isIntersecting)) {
+              loadPageFunc(getPage());
+            }
+          }, { rootMargin: '200px' }).observe(sentinel);
+        };
+        
+        createObserver(bottomSentinel, page => loadPage(page, false), () => ++maxPage);
+        createObserver(topSentinel, page => loadPage(page, true), () => minPage > 0 ? --minPage : minPage);
+
          
-           // Observer for the top sentinel: load the previous page when near the top.
-           const topObserver = new IntersectionObserver(entries => {
-             entries.forEach(entry => {
-               if (entry.isIntersecting && minPage > 0) {
-                 let prevPage = minPage - 1;
-                 loadPage(prevPage, true);
-                 minPage = prevPage;
-               }
-             });
-           }, { rootMargin: '200px' });
-           topObserver.observe(topSentinel);
-         
-           // Initially load the starting page.
-           loadPage(0, false);
       </script>
 
 </body>
