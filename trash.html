@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dynamic Page Loader</title>
-
 </head>
 <body>
   <div id="container">
@@ -12,6 +11,119 @@
     <!-- Pages will be inserted here -->
     <div id="bottom-sentinel" class="sentinel"></div>
   </div>
+  <script>
+    // Declare the minPage, maxPage, and pages variables once to avoid conflicts
+    let minPage = 0, maxPage = 0;
+    let pages = {}; // Cache loaded pages.
+    let container = document.getElementById('container');
+    const topSentinel = document.getElementById('top-sentinel');
+    const bottomSentinel = document.getElementById('bottom-sentinel');
 
+    document.addEventListener("DOMContentLoaded", () => {
+      // Check if the sentinels are correctly found
+      console.log('Top Sentinel:', topSentinel);
+      console.log('Bottom Sentinel:', bottomSentinel);
+
+      if (topSentinel && bottomSentinel) {
+        // Create observers for the sentinels
+        createObserver(bottomSentinel, () => loadPage(incrementMaxPage(), false));
+        createObserver(topSentinel, () => loadPage(decrementMinPage(), true));
+      } else {
+        console.error('Sentinel elements are missing in the DOM');
+      }
+
+      loadCSS();
+    });
+
+    function createObserver(sentinel, loadPageFunc) {
+      // Log to check if sentinel is a valid DOM element
+      console.log('Sentinel:', sentinel);
+
+      if (sentinel instanceof Element) {
+        new IntersectionObserver(entries => {
+          if (entries.some(entry => entry.isIntersecting)) loadPageFunc();
+        }).observe(sentinel);
+      } else {
+        console.error('Sentinel element is not a valid DOM element');
+      }
+    }
+
+    function loadCSS() {
+      const cssUrl = `https://raw.githubusercontent.com/ban-land/Backups/refs/heads/main/Channels/ban%20land%20-%20💬%20chat%20-%20trash%20[703855942055493652]/[703855942055493652]_part_0.html`;
+
+      fetch(cssUrl)
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          doc.querySelectorAll('style, link[rel="stylesheet"]').forEach(tag => {
+            document.head.appendChild(tag.cloneNode(true));
+          });
+        })
+        .catch(err => console.error('Error loading CSS from part_0:', err));
+    }
+
+    // Loads a page. If 'prepend' is true, the page is inserted before the top sentinel.
+    function loadPage(page, prepend = false) {
+      if (page < 0 || pages[page]) return;
+
+      const pageDiv = document.createElement("div");
+      pageDiv.className = "page skeleton";
+      pageDiv.id = `page_${page}`;
+
+      if (prepend) {
+        container.insertBefore(pageDiv, topSentinel.nextSibling);
+      } else {
+        container.insertBefore(pageDiv, bottomSentinel);
+      }
+
+      let prevHeight = container.scrollHeight;
+
+      const url = `https://raw.githubusercontent.com/ban-land/Backups/refs/heads/main/Channels/ban%20land%20-%20💬%20chat%20-%20trash%20[703855942055493652]/[703855942055493652]_part_${page}.html`;
+
+      // Fetch and load the page content
+      fetch(url)
+        .then(response => response.text())
+        .then(htmlContent => {
+          pageDiv.innerHTML = processChannelHTML(htmlContent);
+          pageDiv.classList.remove("skeleton");
+          pages[page] = pageDiv;
+
+          if (prepend) {
+            let newHeight = container.scrollHeight;
+            window.scrollBy(0, newHeight - prevHeight); // Scroll to the new content
+          }
+        })
+        .catch(err => console.error("Error loading page", page, err));
+    }
+
+    function processChannelHTML(htmlContent) {
+      // Replace URL and clean up HTML content
+      htmlContent = htmlContent.replace(
+        /https:\/\/twemoji\.maxcdn\.com\/2\//g,
+        "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/"
+      );
+
+      let tempContainer = document.createElement("div");
+      tempContainer.innerHTML = htmlContent;
+
+      tempContainer.querySelectorAll(".preamble__guild-icon-container").forEach(el => el.remove());
+
+      tempContainer.querySelectorAll(".preamble__entry").forEach(el => {
+        if (el.textContent.trim() === "ban land") {
+          el.remove();
+        }
+      });
+
+      tempContainer.querySelectorAll(".postamble").forEach(el => {
+        el.innerHTML = '<a href="https://github.com/George-TheGamer">Content Restored by GeorgeTheGamer</a>';
+      });
+
+      return tempContainer.innerHTML; // Return the modified HTML
+    }
+
+    const incrementMaxPage = () => ++maxPage;
+    const decrementMinPage = () => (minPage > 0 ? --minPage : minPage);
+  </script>
 </body>
 </html>
