@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Page Loader</title>
+
+</head>
+<body>
+  <div id="container">
+    <div id="top-sentinel" class="sentinel"></div>
+    <!-- Pages will be inserted here -->
+    <div id="bottom-sentinel" class="sentinel"></div>
+  </div>
+<script>
+  function loadCSS() {
+    const cssUrl = `https://raw.githubusercontent.com/ban-land/Backups/refs/heads/main/Channels/ban%20land%20-%20💬%20chat%20-%20trash%20[703855942055493652]/[703855942055493652]_part_0.html`;
+
+    fetch(cssUrl)
+      .then(response => response.text())
+      .then(html => {
+        // Extract CSS from the fetched HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const styleTags = doc.querySelectorAll('style, link[rel="stylesheet"]');
+
+        styleTags.forEach(tag => {
+          document.head.appendChild(tag.cloneNode(true));
+        });
+      })
+      .catch(err => console.error('Error loading CSS from part_0:', err));
+  }
+
+  // Load CSS when the page is ready
+  document.addEventListener("DOMContentLoaded", loadCSS);
+</script>
+
+  <script>
+    // Track the lowest and highest page numbers that have been loaded.
+    let minPage = 0, maxPage = 0; // Starting page is 7.
+    let pages = {}; // Cache loaded pages.
+    const container = document.getElementById('container');
+    const topSentinel = document.getElementById('top-sentinel');
+    const bottomSentinel = document.getElementById('bottom-sentinel');
+
+    // Loads a page. If 'prepend' is true, the page is inserted after the top sentinel.
+    function loadPage(page, prepend = false) {
+      // If invalid page or already loaded, do nothing.
+      if (page < 0 || pages[page]) return;
+
+      const pageDiv = document.createElement('div');
+      pageDiv.className = 'page skeleton';
+      pageDiv.id = `page_${page}`;
+
+      // Insert the new page in the DOM.
+      if (prepend) {
+        container.insertBefore(pageDiv, topSentinel.nextSibling);
+      } else {
+        container.insertBefore(pageDiv, bottomSentinel);
+      }
+
+      // For scroll preservation when prepending, record container height.
+      let prevHeight = container.scrollHeight;
+
+      // Build the URL (update with your actual URL path if needed).
+      const url = `https://raw.githubusercontent.com/ban-land/Backups/refs/heads/main/Channels/ban%20land%20-%20💬%20chat%20-%20trash%20[703855942055493652]/[703855942055493652]_part_${page}.html`;
+
+      fetch(url)
+        .then(response => response.text())
+        .then(html => {
+          pageDiv.innerHTML = html;
+          pageDiv.classList.remove('skeleton');
+          pages[page] = pageDiv;
+          if (prepend) {
+            // If content was added at the top, calculate the height change and adjust scroll.
+            let newHeight = container.scrollHeight;
+            let heightDiff = newHeight - prevHeight;
+            window.scrollBy(0, heightDiff);
+          }
+        })
+        .catch(err => console.error('Error loading page', page, err));
+    }
+
+    // Observer for the bottom sentinel: load the next page when near the bottom.
+    const bottomObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          let nextPage = maxPage + 1;
+          loadPage(nextPage, false);
+          maxPage = nextPage;
+        }
+      });
+    }, { rootMargin: '200px' });
+    bottomObserver.observe(bottomSentinel);
+
+    // Observer for the top sentinel: load the previous page when near the top.
+    const topObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && minPage > 0) {
+          let prevPage = minPage - 1;
+          loadPage(prevPage, true);
+          minPage = prevPage;
+        }
+      });
+    }, { rootMargin: '200px' });
+    topObserver.observe(topSentinel);
+
+    // Initially load the starting page.
+    loadPage(0, false);
+  </script>
+
+
+</body>
+</html>
