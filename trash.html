@@ -44,42 +44,64 @@
     const bottomSentinel = document.getElementById('bottom-sentinel');
 
     // Loads a page. If 'prepend' is true, the page is inserted after the top sentinel.
-    function loadPage(page, prepend = false) {
-      // If invalid page or already loaded, do nothing.
-      if (page < 0 || pages[page]) return;
+function loadPage(page, prepend = false) {
+    if (page < 0 || pages[page]) return;
 
-      const pageDiv = document.createElement('div');
-      pageDiv.className = 'page skeleton';
-      pageDiv.id = `page_${page}`;
+    const pageDiv = document.createElement("div");
+    pageDiv.className = "page skeleton";
+    pageDiv.id = `page_${page}`;
 
-      // Insert the new page in the DOM.
-      if (prepend) {
+    if (prepend) {
         container.insertBefore(pageDiv, topSentinel.nextSibling);
-      } else {
+    } else {
         container.insertBefore(pageDiv, bottomSentinel);
-      }
-
-      // For scroll preservation when prepending, record container height.
-      let prevHeight = container.scrollHeight;
-
-      // Build the URL (update with your actual URL path if needed).
-      const url = `https://raw.githubusercontent.com/ban-land/Backups/refs/heads/main/Channels/ban%20land%20-%20💬%20chat%20-%20trash%20[703855942055493652]/[703855942055493652]_part_${page}.html`;
-
-      fetch(url)
-        .then(response => response.text())
-        .then(html => {
-          pageDiv.innerHTML = html;
-          pageDiv.classList.remove('skeleton');
-          pages[page] = pageDiv;
-          if (prepend) {
-            // If content was added at the top, calculate the height change and adjust scroll.
-            let newHeight = container.scrollHeight;
-            let heightDiff = newHeight - prevHeight;
-            window.scrollBy(0, heightDiff);
-          }
-        })
-        .catch(err => console.error('Error loading page', page, err));
     }
+
+    let prevHeight = container.scrollHeight;
+
+    const url = `https://raw.githubusercontent.com/ban-land/Backups/refs/heads/main/Channels/ban%20land%20-%20💬%20chat%20-%20trash%20[703855942055493652]/[703855942055493652]_part_${page}.html`;
+
+    // Use loadChannel instead of direct fetch processing
+    fetch(url)
+        .then((response) => response.text())
+        .then((htmlContent) => {
+            const processedHTML = processChannelHTML(htmlContent);
+            pageDiv.innerHTML = processedHTML;
+            pageDiv.classList.remove("skeleton");
+            pages[page] = pageDiv;
+
+            if (prepend) {
+                let newHeight = container.scrollHeight;
+                let heightDiff = newHeight - prevHeight;
+                window.scrollBy(0, heightDiff);
+            }
+        })
+        .catch((err) => console.error("Error loading page", page, err));
+}
+function processChannelHTML(htmlContent) {
+    htmlContent = htmlContent.replace(
+        /https:\/\/twemoji\.maxcdn\.com\/2\//g,
+        "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/"
+    );
+
+    let tempContainer = document.createElement("div");
+    tempContainer.innerHTML = htmlContent;
+
+    tempContainer.querySelectorAll(".preamble__guild-icon-container").forEach(el => el.remove());
+
+    tempContainer.querySelectorAll(".preamble__entry").forEach(el => {
+        if (el.textContent.trim() === "ban land") {
+            el.remove();
+        }
+    });
+
+    tempContainer.querySelectorAll(".postamble").forEach(el => {
+        el.innerHTML = '<a href="https://github.com/George-TheGamer">Content Restored by GeorgeTheGamer</a>';
+    });
+
+    return tempContainer.innerHTML; // Return the modified HTML
+}
+
 
     // Observer for the bottom sentinel: load the next page when near the bottom.
     const bottomObserver = new IntersectionObserver(entries => {
