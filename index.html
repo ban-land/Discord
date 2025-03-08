@@ -234,7 +234,7 @@
  function redirectToContinue() {
    //window.location.href = redirect;
    console.log(redirect+".html");
-   loadChannel(redirect+".html");
+   loadChannelUnfiltered(redirect+".html");
  }
          // Flag to track if the popup has been closed
            let isPopupClosed = false;
@@ -303,7 +303,20 @@
                      .catch((error) => console.error("Error loading channel content:", error));
              }
  
- 
+             // Function to load the channel's HTML content (unfiltered version)
+            function loadChannelUnfiltered(url) {
+                fetch(url)
+                    .then((response) => response.text())
+                    .then((htmlContent) => {
+                        // Directly insert the raw HTML content into the content section
+                        document.querySelector("#content").innerHTML = htmlContent;
+            
+                        // Now load any scripts contained in the HTML
+                        loadJSFromChannel(url);
+                    })
+                    .catch((error) => console.error("Error loading channel content:", error));
+            }
+
  
  
              // Function to load and execute JavaScript from the loaded channel HTML
