@@ -233,8 +233,8 @@
  
  function redirectToContinue() {
    //window.location.href = redirect;
-   console.log(redirect);
-   loadChannel(redirect);
+   console.log(redirect+".html");
+   loadChannel(redirect+".html");
  }
          // Flag to track if the popup has been closed
            let isPopupClosed = false;
@@ -338,7 +338,7 @@
              // Function to change the menu name and load the correct channel content
              function loadChannelAndChangeMenu(channelUrl, channelName) {
                  console.log(channelName);
-                 redirect = channelName = ".html";
+                 redirect = channelName;;
                  // Load the channel HTML
                  loadChannel(channelUrl);
  
