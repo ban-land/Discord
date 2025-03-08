@@ -230,19 +230,6 @@
     <!-- partial -->
     <script>
 
-// Observer for the bottom sentinel: load the next page when near the bottom.
-           const bottomObserver = new IntersectionObserver(entries => {
-             entries.forEach(entry => {
-               if (entry.isIntersecting) {
-                 let nextPage = maxPage + 1;
-                 loadPage(nextPage, false);
-                 maxPage = nextPage;
-               }
-             });
-           }, { rootMargin: '200px' });
-           bottomObserver.observe(bottomSentinel);
-
-
         
 let redirect = "index.html";
 
