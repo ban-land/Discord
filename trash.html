@@ -115,12 +115,14 @@ function modifyPageContent(pageData) {
 // Remove old pages when exceeding maxLoadedPages
 function cleanupOldPages() {
     let pageNumbers = Object.keys(cachedPages).map(Number);
-    if (pageNumbers.length > maxLoadedPages) {
+    // Ensure page 0 is never removed
+    if (pageNumbers.length > maxLoadedPages && !pageNumbers.includes(0)) {
         let oldestPage = Math.min(...pageNumbers);
         cachedPages[oldestPage].remove();
         delete cachedPages[oldestPage];
     }
 }
+
 
 // Load more content (forward navigation)
 function loadMoreContent() {
