@@ -33,14 +33,15 @@
 </script>
 
   <script>
-    let lowestPage = 0, highestPage = 0;
-    let cachedPages = {};
-    const mainWrapper = document.getElementById('mainWrapper');
-    const upperTrigger = document.getElementById('upperTrigger');
-    const lowerTrigger = document.getElementById('lowerTrigger');
+let lowestPage = 0, highestPage = 0;
+let cachedPages = {};
+const maxPages = 79; // Limit to 79 pages
+const mainWrapper = document.getElementById('mainWrapper');
+const upperTrigger = document.getElementById('upperTrigger');
+const lowerTrigger = document.getElementById('lowerTrigger');
 
 function retrievePage(pageNum, insertAtTop = false) {
-    if (pageNum < 0 || cachedPages[pageNum]) return;
+    if (pageNum < 0 || pageNum >= maxPages || cachedPages[pageNum]) return;
 
     const newPageDiv = document.createElement("div");
     newPageDiv.className = "contentBlock placeholder";
@@ -53,7 +54,6 @@ function retrievePage(pageNum, insertAtTop = false) {
     }
 
     let prevHeight = mainWrapper.scrollHeight;
-
     const contentUrl = `https://raw.githubusercontent.com/ban-land/Backups/refs/heads/main/Channels/ban%20land%20-%20💬%20chat%20-%20trash%20[703855942055493652]/[703855942055493652]_part_${pageNum}.html`;
 
     fetch(contentUrl)
@@ -72,6 +72,7 @@ function retrievePage(pageNum, insertAtTop = false) {
         })
         .catch((error) => console.error("Error fetching page", pageNum, error));
 }
+
 function modifyPageContent(pageData) {
     pageData = pageData.replace(
         /https:\/\/twemoji\.maxcdn\.com\/2\//g,
@@ -96,29 +97,32 @@ function modifyPageContent(pageData) {
     return tempWrapper.innerHTML;
 }
 
-    const observeLower = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          let nextContent = highestPage + 1;
-          retrievePage(nextContent, false);
-          highestPage = nextContent;
-        }
-      });
-    }, { rootMargin: '200px' });
-    observeLower.observe(lowerTrigger);
+const observerOptions = { rootMargin: '500px' };
 
-    const observeUpper = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
+const observeLower = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting && highestPage < maxPages - 1) {
+            let nextContent = highestPage + 1;
+            retrievePage(nextContent, false);
+            highestPage = nextContent;
+        }
+    });
+}, observerOptions);
+observeLower.observe(lowerTrigger);
+
+const observeUpper = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
         if (entry.isIntersecting && lowestPage > 0) {
-          let previousContent = lowestPage - 1;
-          retrievePage(previousContent, true);
-          lowestPage = previousContent;
+            let previousContent = lowestPage - 1;
+            retrievePage(previousContent, true);
+            lowestPage = previousContent;
         }
-      });
-    }, { rootMargin: '200px' });
-    observeUpper.observe(upperTrigger);
+    });
+}, observerOptions);
+observeUpper.observe(upperTrigger);
 
-    retrievePage(0, false);
+retrievePage(0, false);
+
   </script>
 </body>
 </html>
