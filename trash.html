@@ -33,42 +33,52 @@
 </script>
 
   <script>
-let lowestPage = 0, highestPage = 0;
+    let currentPage = 2; // Start from page 2 (since first 3 pages load automatically)
+let maxPages = 79; // Limit to 79 pages
 let cachedPages = {};
-const maxPages = 79; // Limit to 79 pages
+const maxLoadedPages = 7; // Keep only the last 4 pages in memory
 const mainWrapper = document.getElementById('mainWrapper');
-const upperTrigger = document.getElementById('upperTrigger');
-const lowerTrigger = document.getElementById('lowerTrigger');
 
-function retrievePage(pageNum, insertAtTop = false) {
+// Create the Discord-themed Load More button
+const loadMoreButton = document.createElement("button");
+loadMoreButton.innerText = "Load More";
+loadMoreButton.style.display = "block";
+loadMoreButton.style.margin = "20px auto";
+loadMoreButton.style.padding = "12px 24px";
+loadMoreButton.style.fontSize = "16px";
+loadMoreButton.style.fontWeight = "bold";
+loadMoreButton.style.cursor = "pointer";
+loadMoreButton.style.border = "none";
+loadMoreButton.style.borderRadius = "8px";
+loadMoreButton.style.backgroundColor = "#5865F2"; // Discord blurple
+loadMoreButton.style.color = "white";
+loadMoreButton.style.transition = "background 0.2s";
+loadMoreButton.onmouseover = () => (loadMoreButton.style.backgroundColor = "#4752C4");
+loadMoreButton.onmouseout = () => (loadMoreButton.style.backgroundColor = "#5865F2");
+loadMoreButton.onclick = loadMoreContent;
+mainWrapper.appendChild(loadMoreButton);
+
+function retrievePage(pageNum) {
     if (pageNum < 0 || pageNum >= maxPages || cachedPages[pageNum]) return;
 
     const newPageDiv = document.createElement("div");
     newPageDiv.className = "contentBlock placeholder";
     newPageDiv.id = `content_${pageNum}`;
 
-    if (insertAtTop) {
-        mainWrapper.insertBefore(newPageDiv, upperTrigger.nextSibling);
-    } else {
-        mainWrapper.insertBefore(newPageDiv, lowerTrigger);
-    }
+    mainWrapper.insertBefore(newPageDiv, loadMoreButton);
 
-    let prevHeight = mainWrapper.scrollHeight;
     const contentUrl = `https://raw.githubusercontent.com/ban-land/Backups/refs/heads/main/Channels/ban%20land%20-%20💬%20chat%20-%20trash%20[703855942055493652]/[703855942055493652]_part_${pageNum}.html`;
 
     fetch(contentUrl)
         .then((res) => res.text())
         .then((pageData) => {
-            const modifiedContent = modifyPageContent(pageData);
-            newPageDiv.innerHTML = modifiedContent;
-            newPageDiv.classList.remove("placeholder");
-            cachedPages[pageNum] = newPageDiv;
-
-            if (insertAtTop) {
-                let newHeight = mainWrapper.scrollHeight;
-                let heightDiff = newHeight - prevHeight;
-                window.scrollBy(0, heightDiff);
-            }
+            requestAnimationFrame(() => {
+                const modifiedContent = modifyPageContent(pageData);
+                newPageDiv.innerHTML = modifiedContent;
+                newPageDiv.classList.remove("placeholder");
+                cachedPages[pageNum] = newPageDiv;
+                cleanupOldPages();
+            });
         })
         .catch((error) => console.error("Error fetching page", pageNum, error));
 }
@@ -81,6 +91,11 @@ function modifyPageContent(pageData) {
 
     let tempWrapper = document.createElement("div");
     tempWrapper.innerHTML = pageData;
+
+    // Lazy load images
+    tempWrapper.querySelectorAll("img").forEach(img => {
+        img.loading = "lazy";
+    });
 
     tempWrapper.querySelectorAll(".preamble__guild-icon-container").forEach(el => el.remove());
 
@@ -97,31 +112,34 @@ function modifyPageContent(pageData) {
     return tempWrapper.innerHTML;
 }
 
-const observerOptions = { rootMargin: '500px' };
+// Remove old pages when exceeding maxLoadedPages
+function cleanupOldPages() {
+    let pageNumbers = Object.keys(cachedPages).map(Number);
+    if (pageNumbers.length > maxLoadedPages) {
+        let oldestPage = Math.min(...pageNumbers);
+        cachedPages[oldestPage].remove();
+        delete cachedPages[oldestPage];
+    }
+}
 
-const observeLower = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting && highestPage < maxPages - 1) {
-            let nextContent = highestPage + 1;
-            retrievePage(nextContent, false);
-            highestPage = nextContent;
-        }
-    });
-}, observerOptions);
-observeLower.observe(lowerTrigger);
+// Load more content (forward navigation)
+function loadMoreContent() {
+    if (currentPage < maxPages - 1) {
+        currentPage++;
+        retrievePage(currentPage);
+    } else {
+        loadMoreButton.innerText = "No More Content";
+        loadMoreButton.disabled = true;
+        loadMoreButton.style.cursor = "not-allowed";
+        loadMoreButton.style.backgroundColor = "#4f545c"; // Discord gray
+    }
+}
 
-const observeUpper = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting && lowestPage > 0) {
-            let previousContent = lowestPage - 1;
-            retrievePage(previousContent, true);
-            lowestPage = previousContent;
-        }
-    });
-}, observerOptions);
-observeUpper.observe(upperTrigger);
+// Load the first 3 pages automatically
+retrievePage(0);
+retrievePage(1);
+retrievePage(2);
 
-retrievePage(0, false);
 
   </script>
 </body>
